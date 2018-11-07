@@ -1,0 +1,129 @@
+#!/usr/bin/env python2
+
+# -*- coding: utf-8 -*-
+
+#
+# Author: Mihai Galos
+# Date: November 7 , 2018
+# Purpose: indicator for the Netatmo Weather Station
+# Tested on: Ubuntu 16.04 LTS
+#
+#
+# Licensed under The MIT License (MIT).
+# See included LICENSE file or the notice below.
+#
+# Copyright (c) 2018 Mihai Galos
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import appindicator
+import gtk, glib
+import datetime
+
+from Drivers.Bluetooth.bluetooth import BluetoothModule
+
+class BluetoothModuleIndicator:
+    def __init__(self, bluetooth_address, timeout_interval_msec=1*1000):
+
+        self.last_timestamp = datetime.datetime.now()
+        self.timeout_interval_msec = timeout_interval_msec
+        self.setup_bluetooth(bluetooth_address)
+        self.setup_window()
+        self.setup_menu()
+        self.setup_update()
+
+
+
+    def create_menu(self):
+        self.menu = gtk.Menu()
+        self.create_timediff_item()
+        self.create_quit_item()
+
+
+    def create_quit_item(self):
+        quit_item = gtk.MenuItem("Quit")
+        quit_item.connect("activate", self.quit)
+        quit_item.show()
+        self.menu.append(quit_item)
+
+    def create_timediff_item(self):
+        img = gtk.Image()
+        img.set_from_stock(gtk.STOCK_DIALOG_INFO, 1)
+        self.timediff_item = gtk.ImageMenuItem(self.get_timediff_label())
+        self.timediff_item.set_image(img)
+        self.timediff_item.set_always_show_image(True)
+        self.timediff_item.connect("activate", self.clicked)
+        self.timediff_item.show()
+        self.menu.append(self.timediff_item)
+
+    def get_timediff_label(self):
+        return 'Retrieved ' + self.compute_timestamp_diff() + "s ago."
+
+    def compute_timestamp_diff(self):
+        timestamp = datetime.datetime.now()
+        time_diff = timestamp - self.last_timestamp
+        self.last_timestamp = datetime.datetime.now()
+        diff_seconds  = time_diff.total_seconds()
+
+        if(diff_seconds > 5*60):
+            diff_seconds = "--"
+        else:
+            diff_seconds = str(int(diff_seconds))
+
+        return diff_seconds
+
+    def on_update(self):
+        self.timediff_item.set_label(self.get_timediff_label())
+        glib.timeout_add(self.timeout_interval_msec, self.on_update)
+
+    def setup_menu(self):
+        self.create_menu()
+        self.menu.show()
+        self.indicator.set_menu(self.menu)
+
+    def setup_bluetooth(self, bluetooth_address):
+        try:
+            self.bluetooth_module = BluetoothModule(bluetooth_address)
+            self.label = self.bluetooth_module.read(once=True)
+        except:
+            self.label = str("No reply from  " + bluetooth_address)
+            pass
+    def setup_update(self):
+        glib.timeout_add(self.timeout_interval_msec, self.on_update)
+
+    def setup_window(self):
+        self.indicator = appindicator.Indicator("sample-ind", "bluetooth-active",
+                                                appindicator.CATEGORY_APPLICATION_STATUS)
+        self.indicator.set_status(appindicator.STATUS_ACTIVE)
+        self.indicator.set_label(self.label)
+
+
+    def quit(self, widget):
+        gtk.main_quit()
+
+    def clicked(self, widget):
+        print "Item selected"
+
+def main():
+    gtk.main()
+    return 0
+
+if __name__ == "__main__":
+    indicator = BluetoothModuleIndicator("3C:A5:39:90:BB:B1")
+main()
