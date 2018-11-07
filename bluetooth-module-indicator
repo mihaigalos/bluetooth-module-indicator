@@ -39,6 +39,11 @@ import datetime
 
 from Drivers.Bluetooth.bluetooth import BluetoothModule
 
+current_version = "v0.1-1"
+default_update_interval_msec = 30 * 1000
+homepage_location = "https://github.com/mihaigalos/bluetooth-module-indicator"
+timeout_no_connection_seconds = 5 * 60
+
 
 class AboutDialog:
 
@@ -54,13 +59,13 @@ class AboutDialog:
         self.dialog.vbox.add(author)
         author.show()
 
-        version = gtk.Label("v0.1-1")
+        version = gtk.Label(current_version)
         self.dialog.vbox.add(version)
         version.show()
 
         homepage = gtk.Label()
         homepage.set_markup(
-            "<a href=\"https://github.com/mihaigalos/bluetooth-module-indicator\">https://github.com/mihaigalos/bluetooth-module-indicator</a>")
+            "<a href=\"" + homepage_location + "\">" + homepage_location + "</a>")
         self.dialog.vbox.add(homepage)
         homepage.show()
 
@@ -135,14 +140,17 @@ class Menu:
 
 
 class BluetoothModuleIndicator:
-    def __init__(self, bluetooth_address, timeout_interval_msec=1 * 1000):
+    def __init__(self, bluetooth_address, timeout_interval_msec=default_update_interval_msec):
 
         self.last_timestamp = datetime.datetime.now()
         self.timeout_interval_msec = timeout_interval_msec
+
         self.setup_bluetooth(bluetooth_address)
         self.setup_window()
         self.setup_menu()
         self.setup_update()
+
+        self.update_diff_time_item_label()
 
     def compute_timestamp_diff(self):
         timestamp = datetime.datetime.now()
@@ -150,7 +158,7 @@ class BluetoothModuleIndicator:
         self.last_timestamp = datetime.datetime.now()
         diff_seconds = time_diff.total_seconds()
 
-        if(diff_seconds > 5 * 60):
+        if(diff_seconds > timeout_no_connection_seconds):
             diff_seconds = "--"
         else:
             diff_seconds = str(int(diff_seconds))
@@ -161,8 +169,11 @@ class BluetoothModuleIndicator:
         return 'Retrieved ' + self.compute_timestamp_diff() + "s ago."
 
     def on_update(self):
-        self.menu.set_diff_time_item_label(self.get_timediff_label())
+        self.update_diff_time_item_label()
         glib.timeout_add(self.timeout_interval_msec, self.on_update)
+
+    def update_diff_time_item_label(self):
+        self.menu.set_diff_time_item_label(self.get_timediff_label())
 
     def setup_bluetooth(self, bluetooth_address):
         try:
