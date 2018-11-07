@@ -33,10 +33,12 @@
 # SOFTWARE.
 
 import appindicator
-import gtk, glib
+import gtk
+import glib
 import datetime
 
 from Drivers.Bluetooth.bluetooth import BluetoothModule
+
 
 class AboutDialog:
 
@@ -57,7 +59,8 @@ class AboutDialog:
         version.show()
 
         homepage = gtk.Label()
-        homepage.set_markup("<a href=\"https://github.com/mihaigalos/bluetooth-module-indicator\">https://github.com/mihaigalos/bluetooth-module-indicator</a>")
+        homepage.set_markup(
+            "<a href=\"https://github.com/mihaigalos/bluetooth-module-indicator\">https://github.com/mihaigalos/bluetooth-module-indicator</a>")
         self.dialog.vbox.add(homepage)
         homepage.show()
 
@@ -70,6 +73,7 @@ class AboutDialog:
 
     def on_ok_button_pressed(self, *args):
         self.dialog.destroy()
+
 
 class Menu:
 
@@ -129,8 +133,9 @@ class Menu:
     def quit(self, widget):
         gtk.main_quit()
 
+
 class BluetoothModuleIndicator:
-    def __init__(self, bluetooth_address, timeout_interval_msec=1*1000):
+    def __init__(self, bluetooth_address, timeout_interval_msec=1 * 1000):
 
         self.last_timestamp = datetime.datetime.now()
         self.timeout_interval_msec = timeout_interval_msec
@@ -143,9 +148,9 @@ class BluetoothModuleIndicator:
         timestamp = datetime.datetime.now()
         time_diff = timestamp - self.last_timestamp
         self.last_timestamp = datetime.datetime.now()
-        diff_seconds  = time_diff.total_seconds()
+        diff_seconds = time_diff.total_seconds()
 
-        if(diff_seconds > 5*60):
+        if(diff_seconds > 5 * 60):
             diff_seconds = "--"
         else:
             diff_seconds = str(int(diff_seconds))
@@ -184,6 +189,7 @@ class BluetoothModuleIndicator:
 def main():
     gtk.main()
     return 0
+
 
 if __name__ == "__main__":
     indicator = BluetoothModuleIndicator("3C:A5:39:90:BB:B1")
