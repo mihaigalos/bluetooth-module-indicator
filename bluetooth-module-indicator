@@ -46,7 +46,6 @@ class AboutDialog():
                                  None,
                                  gtk.DIALOG_DESTROY_WITH_PARENT)
 
-
         self.dialog.set_default_size(150, 100)
 
         author = gtk.Label("(c) Mihai Galos 2018.")
@@ -68,7 +67,6 @@ class AboutDialog():
         self.ok_button.show()
 
         self.dialog.run()
-
 
     def on_ok_button_pressed(self, *args):
         self.dialog.destroy()
@@ -113,7 +111,6 @@ class BluetoothModuleIndicator:
         self.create_separator()
         self.create_about_item()
         self.create_quit_item()
-
 
     def create_quit_item(self):
         img = gtk.Image()
@@ -174,7 +171,6 @@ class BluetoothModuleIndicator:
 
     def quit(self, widget):
         gtk.main_quit()
-
 
 def main():
     gtk.main()
