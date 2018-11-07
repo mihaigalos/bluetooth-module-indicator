@@ -38,6 +38,41 @@ import datetime
 
 from Drivers.Bluetooth.bluetooth import BluetoothModule
 
+class AboutDialog():
+
+    def __init__(self):
+
+        self.dialog = gtk.Dialog("About",
+                                 None,
+                                 gtk.DIALOG_DESTROY_WITH_PARENT)
+
+
+        self.dialog.set_default_size(150, 100)
+
+        author = gtk.Label("(c) Mihai Galos 2018.")
+        self.dialog.vbox.add(author)
+        author.show()
+
+        version = gtk.Label("v0.1-1")
+        self.dialog.vbox.add(version)
+        version.show()
+
+        homepage = gtk.Label()
+        homepage.set_markup("<a href=\"https://github.com/mihaigalos/bluetooth-module-indicator\">https://github.com/mihaigalos/bluetooth-module-indicator</a>")
+        self.dialog.vbox.add(homepage)
+        homepage.show()
+
+        self.ok_button = gtk.Button("Ok")
+        self.ok_button.connect("pressed", self.on_ok_button_pressed)
+        self.dialog.vbox.pack_start(self.ok_button, False, False, 1)
+        self.ok_button.show()
+
+        self.dialog.run()
+
+
+    def on_ok_button_pressed(self, *args):
+        self.dialog.destroy()
+
 class BluetoothModuleIndicator:
     def __init__(self, bluetooth_address, timeout_interval_msec=1*1000):
 
@@ -48,11 +83,34 @@ class BluetoothModuleIndicator:
         self.setup_menu()
         self.setup_update()
 
+    def compute_timestamp_diff(self):
+        timestamp = datetime.datetime.now()
+        time_diff = timestamp - self.last_timestamp
+        self.last_timestamp = datetime.datetime.now()
+        diff_seconds  = time_diff.total_seconds()
 
+        if(diff_seconds > 5*60):
+            diff_seconds = "--"
+        else:
+            diff_seconds = str(int(diff_seconds))
+
+        return diff_seconds
+
+    def create_about_item(self):
+        img = gtk.Image()
+        img.set_from_stock(gtk.STOCK_HELP, 1)
+
+        self.about_item = gtk.ImageMenuItem("About")
+        self.about_item.set_image(img)
+        self.about_item.set_always_show_image(True)
+        self.about_item.connect("activate", self.on_about_clicked)
+        self.about_item.show()
+        self.menu.append(self.about_item)
 
     def create_menu(self):
         self.menu = gtk.Menu()
         self.create_timediff_item()
+        self.create_about_item()
         self.create_quit_item()
 
 
@@ -68,25 +126,14 @@ class BluetoothModuleIndicator:
         self.timediff_item = gtk.ImageMenuItem(self.get_timediff_label())
         self.timediff_item.set_image(img)
         self.timediff_item.set_always_show_image(True)
-        self.timediff_item.connect("activate", self.clicked)
         self.timediff_item.show()
         self.menu.append(self.timediff_item)
 
     def get_timediff_label(self):
         return 'Retrieved ' + self.compute_timestamp_diff() + "s ago."
 
-    def compute_timestamp_diff(self):
-        timestamp = datetime.datetime.now()
-        time_diff = timestamp - self.last_timestamp
-        self.last_timestamp = datetime.datetime.now()
-        diff_seconds  = time_diff.total_seconds()
-
-        if(diff_seconds > 5*60):
-            diff_seconds = "--"
-        else:
-            diff_seconds = str(int(diff_seconds))
-
-        return diff_seconds
+    def on_about_clicked(self, *args):
+        about = AboutDialog()
 
     def on_update(self):
         self.timediff_item.set_label(self.get_timediff_label())
@@ -117,8 +164,6 @@ class BluetoothModuleIndicator:
     def quit(self, widget):
         gtk.main_quit()
 
-    def clicked(self, widget):
-        print "Item selected"
 
 def main():
     gtk.main()
