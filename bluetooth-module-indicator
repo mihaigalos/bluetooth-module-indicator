@@ -100,25 +100,36 @@ class BluetoothModuleIndicator:
         img = gtk.Image()
         img.set_from_stock(gtk.STOCK_HELP, 1)
 
-        self.about_item = gtk.ImageMenuItem("About")
-        self.about_item.set_image(img)
-        self.about_item.set_always_show_image(True)
-        self.about_item.connect("activate", self.on_about_clicked)
-        self.about_item.show()
-        self.menu.append(self.about_item)
+        about_item = gtk.ImageMenuItem("About")
+        about_item.set_image(img)
+        about_item.set_always_show_image(True)
+        about_item.connect("activate", self.on_about_clicked)
+        about_item.show()
+        self.menu.append(about_item)
 
     def create_menu(self):
         self.menu = gtk.Menu()
         self.create_timediff_item()
+        self.create_separator()
         self.create_about_item()
         self.create_quit_item()
 
 
     def create_quit_item(self):
-        quit_item = gtk.MenuItem("Quit")
+        img = gtk.Image()
+        img.set_from_stock(gtk.STOCK_QUIT, 1)
+
+        quit_item = gtk.ImageMenuItem("Quit")
+        quit_item.set_image(img)
+        quit_item.set_always_show_image(True)
         quit_item.connect("activate", self.quit)
         quit_item.show()
         self.menu.append(quit_item)
+
+    def create_separator(self):
+        separator = gtk.SeparatorMenuItem()
+        separator.show()
+        self.menu.append(separator)
 
     def create_timediff_item(self):
         img = gtk.Image()
