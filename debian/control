@@ -1,0 +1,14 @@
+Source: bluetooth-module-indicator
+Section: gnome
+Priority: extra
+Maintainer: Mihai Galos <mihaigalos@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Homepage: https://github.com/mihaigalos/bluetooth-module-indicator
+
+Package: bluetooth-module-indicator
+Architecture: all
+Depends: gir1.2-appindicator3-0.1,
+         ${python:Depends},
+         ${misc:Depends}
+Description: Indicator for bluetooth modules such as JDY-16 or HC-08

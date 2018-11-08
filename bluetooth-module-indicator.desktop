@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Bluetooth Module Indicator
+Comment=Indicator for bluetooth modules such as JDY-16 or HC-08
+Exec=bluetooth-module-indicator
+Type=Application
+Icon=bluetooth-active.svg
+Terminal=false

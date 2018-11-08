@@ -1,0 +1,5 @@
+bluetooth-module-indicator (0.1-1) xenial; urgency=low
+
+  * Initial release
+
+ -- Mihai Galos <mihaigalos@gmail.com>  Tue, 8 Nov 2018 18:07:31 +0100
