@@ -1,6 +1,6 @@
 bluetooth-module-indicator usr/bin/bluetooth_module_indicator/
 bluetooth-module-indicator.desktop usr/share/applications/
-bluetooth-module-indicator.desktop ~/.config/autostart/
+bluetooth-module-indicator.desktop etc/xdg/autostart
 Drivers/__init__.py usr/bin/bluetooth_module_indicator/Drivers/
 Drivers/Bluetooth/__init__.py usr/bin/bluetooth_module_indicator/Drivers/Bluetooth/
 Drivers/Bluetooth/bluetooth.py usr/bin/bluetooth_module_indicator/Drivers/Bluetooth/
