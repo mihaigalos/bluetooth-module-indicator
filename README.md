@@ -16,6 +16,9 @@ netatmo-indicator &
 sudo apt remove --purge bluetooth-module-indicator
 ```
 
+## Screenshots
+![alt text](screenshots/BluetoothModuleIndicator.png)
+
 ###### Sources
 ```
 git clone --recursive https://github.com/mihaigalos/bluetooth-module-indicator.git
